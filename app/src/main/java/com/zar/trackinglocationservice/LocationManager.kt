@@ -33,7 +33,7 @@ class PiLocationManager @Inject constructor(@ApplicationContext val context: Con
         LocationServices.getFusedLocationProviderClient(context)
     }
     private var activity: Activity? = null
-    var GPS_SETTiNGS_REQUEST_CODE = 9234
+    private var GPS_SETTiNGS_REQUEST_CODE = 9234
     fun setActivity(activity: Activity) {
         this.activity = activity
     }
@@ -59,7 +59,6 @@ class PiLocationManager @Inject constructor(@ApplicationContext val context: Con
                     super.onLocationResult(result)
                     result.locations.lastOrNull()?.let { location: Location ->
                         launch {
-                            Log.d("PiLocationManager", "onLocationResult: ")
                             Timber.d("Sending the location")
                             send(location)
                         }
@@ -74,7 +73,7 @@ class PiLocationManager @Inject constructor(@ApplicationContext val context: Con
             )
 
             awaitClose {
-                Log.d("PiLocationManager", "fusedLocationClient:")
+                Timber.d("fusedLocationClient:")
                 Timber.d("Producer coroutine is about to close")
                 fusedLocationClient.removeLocationUpdates(locationCallback)
             }

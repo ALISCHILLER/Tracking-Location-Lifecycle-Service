@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -73,21 +74,21 @@ class LocationForegroundService : LifecycleService() {
     private fun startForegroundService() {
         createNotificationChannel()
         startForeground(NotificationModule.Constants.NOTIFICATION_ID, notification.build())
-        Log.d("startForegroundService", "startForegroundService: ")
+        Timber.d("startForegroundService: ")
         startGpsCheck()
 
         coroutineScope.launch {
             try {
                 piLocationManager.locationUpdates(5)
                     .collect { location ->
-                        Log.d("LocationForegroundService", "LocationForegroundService: ${location.latitude} ${location.longitude}")
+                        Timber.d("LocationForegroundService: " + location.latitude + " " + location.longitude)
 
                         // Do something with the location data...
                         val message = " ${location.latitude} ,  ${location.longitude}"
                     }
             } catch (e: PiLocationException) {
                 // Handle PiLocationException...
-                Log.e("LocationForegroundService", "PiLocationException: ${e.message}")
+                Timber.e("PiLocationException: " + e.message)
             }
         }
 
@@ -95,7 +96,7 @@ class LocationForegroundService : LifecycleService() {
     private fun startGpsCheck() {
         gpsCheckJob = CoroutineScope(Dispatchers.Main).launch {
             while (true) {
-                Log.d("LocationForegroundService", "startGpsCheck")
+                Timber.d("startGpsCheck")
                 piLocationManager.turnOnGPS()
                 delay(5000) // You can adjust the interval as needed
             }
